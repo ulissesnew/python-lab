@@ -3,8 +3,10 @@ services:
   anaconda: 
      build:  .
      container_name: anaconda-notebook 
+     env_file:
+       - .env
      ports: 
-        - "8888:8888" 
+        - "${JUPYTER_PORT}:${JUPYTER_PORT}"
      volumes: 
         - ./notebooks:/opt/notebooks
      command: jupyter lab --notebook-dir=/opt/notebooks --ip=0.0.0.0 --no-browser  --allow-root 

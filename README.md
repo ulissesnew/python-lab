@@ -1,74 +1,162 @@
-# 🐍 Anaconda Jupyter Environment with Docker Compose
+# 🐍 Local Python Lab — Simple Setup with `environment.yml`
 
-This project sets up a containerized Anaconda environment running **Jupyter Notebook**, perfect for data science experiments and notebooks.
-
----
-
-## 📦 What's Inside
-
-- **Anaconda 3**: Includes Python, Conda, and many pre-installed libraries (NumPy, pandas, etc.)
-- **Jupyter Notebook**: Web-based environment for running and editing notebooks
-- **Docker Compose**: Simple setup and run with one command
+> **Goal:** Run Python notebooks locally with Conda, JupyterLab, `.env` secrets, and the OpenAI SDK, using only an `environment.yml` file for package management.
 
 ---
 
-## 🚀 Quick Start
+## 1) Install prerequisites
 
-1. **Clone the repo**  
-   ```bash
-   git clone <your-repo-url>
-   cd <your-project-folder>
+* **Miniconda** or **Anaconda** → [https://docs.conda.io/en/latest/miniconda.html](https://docs.conda.io/en/latest/miniconda.html)
+* **Git** (optional)
 
+---
 
-## 2. Start the container
-```sh
- docker-compose up
+## 2) Create `environment.yml`
 
-```
+In your project root, create this file:
 
-## 3. Access Jupyter Notebook
-Open your browser and go to:
-http://localhost:8888
-
-### jupyter lab
-http://localhost:8888/lab
-
-📌 You’ll see a token in the terminal. Copy and paste it into your browser when prompted.
-
-
-## Conda create environment
-```sh 
-#environment.yml
+```yaml
 name: myenv
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - python=3.9
+  - jupyterlab
+  - ipykernel
   - pandas
   - numpy
-  - jupyter
+  - python-dotenv
+  - requests
+  - beautifulsoup4
+  - ipython
+  - pip
+  - pip:
+      - openai>=1.30.0
 ```
 
-Then run inside container:
+---
 
-```sh 
-conda env create -f /opt/notebooks/environment.yml
+## 3) Create the environment
 
+```bash
+conda env create -f environment.yml
+conda activate myenv
 ```
 
-Activate environment:
-```sh 
-  conda activate myenv
+---
+
+## 4) Register kernel for Jupyter
+
+```bash
+python -m ipykernel install --user --name=myenv --display-name "Python (myenv)"
 ```
 
+---
 
-### Folder structure
+## 5) Start JupyterLab
 
-```sh
-> notebooks
-.gitignore
-docker-compose.yml 
-Dockerfile 
-environment.yml 
-README.md
+```bash
+jupyter lab
 ```
+
+* In JupyterLab, choose kernel **Python (myenv)** if not already active.
+
+**Check active Python:**
+
+```python
+import sys
+print(sys.executable)
+```
+
+Should show `.../envs/myenv/bin/python`.
+
+---
+
+## 6) Use `.env` for secrets
+
+Create a `.env` file:
+
+```dotenv
+OPENAI_API_KEY=sk-your-key-here
+```
+
+Load it in notebooks:
+
+```python
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+print("Client OK")
+```
+
+---
+
+## 7) Update environment if needed
+
+When you add new packages:
+
+```bash
+conda install -n myenv <package>
+```
+
+Export back to file:
+
+```bash
+conda env export --no-builds > environment.yml
+```
+
+---
+
+## 8) Recommended `.gitignore`
+
+```gitignore
+**/.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+.env
+.DS_Store
+```
+
+---
+
+## 9) Optional: GUI Options
+
+By default, **Miniconda** has no graphical interface. If you prefer a GUI:
+
+### A) Install Anaconda Navigator
+
+```bash
+conda install anaconda-navigator
+```
+
+Launch it with:
+
+```bash
+anaconda-navigator
+```
+
+This opens a desktop GUI for managing environments, packages, and Jupyter.
+
+### B) Use JupyterLab as your GUI
+
+```bash
+conda activate myenv
+jupyter lab
+```
+
+This opens a modern browser-based interface for running notebooks.
+
+### C) Use VS Code
+
+* Install [VS Code](https://code.visualstudio.com/)
+* Install the **Python extension**
+* Select the Conda env `myenv` as your interpreter
+* Run notebooks or scripts directly in VS Code
+
+---
+
+✅ Done! Your whole setup is reproducible with just `environment.yml`, and you can choose GUI options that best fit your workflow.

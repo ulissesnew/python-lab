@@ -1,5 +1,6 @@
 name: myenv
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - python=3.9
@@ -7,4 +8,11 @@ dependencies:
   - numpy
   - jupyter
   - jupyterlab
+  - ipykernel
   - python-dotenv
+  - requests 
+  - beautifulsoup4
+  - ipython
+  - pip
+  - pip:
+      - openai>=1.30.0

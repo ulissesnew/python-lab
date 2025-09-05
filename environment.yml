@@ -16,3 +16,4 @@ dependencies:
   - pip
   - pip:
       - openai>=1.30.0
+      - gradio>=3.30.0

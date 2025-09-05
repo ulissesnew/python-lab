@@ -160,3 +160,11 @@ This opens a modern browser-based interface for running notebooks.
 ---
 
 ✅ Done! Your whole setup is reproducible with just `environment.yml`, and you can choose GUI options that best fit your workflow.
+
+
+### Add new package to environment.yml
+→ Run: 
+```bash
+  conda env update --file environment.yml --prune
+```
+→ This updates and cleans your env

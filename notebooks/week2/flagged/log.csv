@@ -1,0 +1,67 @@
+Your message:,Response: ,flag,username,timestamp
+What are the difference between response in stream than normal response in openia package?,"In OpenAPI, there is a subtle difference between a ""response"" in OpenAPI and a ""responses"" object. This difference affects how you handle error responses.
+
+**Normal Response**
+
+A normal response refers to a successful response from an API endpoint that returns a HTTP status code of 200 (OK) or another successful status code. In this case, the API is working as expected, and no errors are returned. The request body contains the desired data in the format specified by the API's content type.
+
+Example:
+```yaml
+openapi: 3.0.2
+info:
+  title: My API
+  description: An example of a simple REST API.
+paths:
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        200:
+          description: A list of users in JSON format
+          content:
+            application/json:
+              schema:
+                type: array
+                items: User!
+```
+In this example, the `responses` object only includes a single response with a HTTP status code of 200. The request body will contain a list of users in JSON format.
+
+**Response (Error Response)**
+
+A response object refers to an error or exception that occurs when there is a problem with the API. This can be due to invalid input, authentication issues, database connectivity errors, and more. In this case, the API returns a HTTP status code that indicates an error has occurred. The `responses` object will typically include one or more error responses, as well as one response for successful outcomes.
+
+Example:
+```yaml
+openapi: 3.0.2
+info:
+  title: My API
+  description: An example of a simple REST API.
+paths:
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        200:
+          description: A list of users in JSON format
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+```
+In this example, the `responses` object includes both a successful response with a HTTP status code of 200 and an error response with a HTTP status code of 500. The error response indicates that there was an issue with the internal server and contains details about the error using a custom schema (`Error`) in the `components/schemas` section (not shown here).
+
+**Key differences**
+
+The main difference between these two examples is:
+
+1. **Successful responses are explicit**: In OpenAPI, it's essential to specify successful responses by listing them under the `""responses""` property.
+2. **Error responses are handled more explicitly**: Error responses should be listed alongside successful responses or in a separate section (like `/components/schemas`).
+3. **Custom error schemes are encouraged**: By providing a custom error schema (`Error`) within `components/schemas`, you can make it easier for clients to parse and understand errors returned by your API.
+4. **Consistency is key**: Always check that successful responses come before or alongside potential errors, so users know the likelihood of encountering those responses.
+
+I hope this clarifies the difference!",,,2025-09-05 17:17:55.320802
